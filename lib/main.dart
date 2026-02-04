@@ -1,10 +1,11 @@
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:weather/components/next_days_buttons.dart';
-import 'package:weather/screens/onboarding.dart';
-import 'package:weather/screens/homepage.dart';
-import 'package:weather/screens/splash.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'repositories/weather_repository.dart';
+import 'viewmodels/forecast_cubit.dart';
+import 'viewmodels/weather_cubit.dart';
+import 'views/splash/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,19 +14,31 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
- debugShowCheckedModeBanner: false,
+    // Create repository instance
+    final weatherRepository = WeatherRepository(dio: Dio());
 
- routes: {
- 'HomePage' : (context) => Homepage(),
- 'splash' : (context) => spalsh(),
- 'firstpage' : (context) => OnBoarding(),
-  'Searchview' : (context) => NextDaysButton(cityName: '',),
- },
- initialRoute: 'splash',
+    return MultiBlocProvider(
+      providers: [
+        // Provide WeatherCubit for home screen
+        BlocProvider<WeatherCubit>(
+          create: (context) => WeatherCubit(repository: weatherRepository),
+        ),
+        // Provide ForecastCubit for forecast screen
+        BlocProvider<ForecastCubit>(
+          create: (context) => ForecastCubit(repository: weatherRepository),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'WeatherCast',
+        theme: ThemeData(
+          primarySwatch: Colors.deepPurple,
+          useMaterial3: true,
+        ),
+        home: const SplashScreen(),
+      ),
     );
   }
 }

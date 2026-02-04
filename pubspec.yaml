@@ -51,6 +51,8 @@ dependencies:
   google_fonts: ^6.2.0
   http: ^1.2.2
   logger: ^2.4.0
+  equatable: ^2.0.5
+
 
 
 dev_dependencies:

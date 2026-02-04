@@ -1,31 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:weather/screens/WeatherWeekScreen.dart';
 
+/// Button to navigate to weekly forecast screen
 class NextDaysButton extends StatelessWidget {
   final String cityName;
+  final VoidCallback onTap;
 
-  NextDaysButton({required this.cityName});
+  const NextDaysButton({
+    super.key,
+    required this.cityName,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => WeatherWeekScreen(CityName: cityName)),
-          );
-        },
+        onTap: onTap,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ShaderMask(
               shaderCallback: (Rect bounds) {
-                return LinearGradient(
+                return const LinearGradient(
                   colors: <Color>[
                     Color(0xFFDA70D6),
-                    Color.fromARGB(255, 44, 140, 147)
+                    Color.fromARGB(255, 44, 140, 147),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
@@ -34,19 +34,23 @@ class NextDaysButton extends StatelessWidget {
               child: Text(
                 'Next days',
                 style: GoogleFonts.montserrat(
-                  textStyle: TextStyle(color: Colors.white, fontSize: 27, fontWeight: FontWeight.w500),
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 27,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ),
-            SizedBox(width: 7),
+            const SizedBox(width: 7),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: Colors.white,
               ),
               width: 28,
               height: 28,
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_forward,
                 color: Colors.black,
                 size: 24,
@@ -58,4 +62,3 @@ class NextDaysButton extends StatelessWidget {
     );
   }
 }
-

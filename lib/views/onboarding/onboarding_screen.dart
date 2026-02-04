@@ -2,47 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:lottie_screen_onboarding_flutter/introduction.dart';
 import 'package:lottie_screen_onboarding_flutter/introscreenonboarding.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:weather/screens/homepage.dart';
 
-class OnBoarding extends StatefulWidget {
-  const OnBoarding({super.key});
+import '../home/home_screen.dart';
+
+/// Onboarding screen shown on first app launch
+class OnboardingScreen extends StatefulWidget {
+  const OnboardingScreen({super.key});
 
   @override
-  State<OnBoarding> createState() => _OnBoardingState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
-class _OnBoardingState extends State<OnBoarding> {
-  bool isFirstTime = true; // متغير لتخزين حالة أول مرة
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  bool isFirstTime = true;
 
   @override
   void initState() {
     super.initState();
-    checkFirstTime();
+    _checkFirstTime();
   }
 
-  void checkFirstTime() async {
+  void _checkFirstTime() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool firstTime = prefs.getBool('isFirstTime') ?? true;
 
     if (firstTime) {
-      // إذا كانت أول مرة، قم بتحديث حالة المتغير
       setState(() {
         isFirstTime = true;
       });
       await prefs.setBool('isFirstTime', false);
     } else {
-      // إذا لم تكن أول مرة، قم بتوجيه المستخدم إلى الشاشة الرئيسية
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) =>  Homepage()),
-      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     }
   }
 
-  final List<Introduction> list = [
+  final List<Introduction> _introductionList = [
     Introduction(
       lottieUrl: 'assets/Welcome.json',
-      title: 'Welcome to WeatherCast',
+      title: 'WeatherCast',
       subTitle:
           'Enjoy effortless daily weather updates and stay ahead of the weather.',
     ),
@@ -53,7 +55,7 @@ class _OnBoardingState extends State<OnBoarding> {
     ),
     Introduction(
       lottieUrl: 'assets/Searchcity.json',
-      title: 'Explore world’s weather!',
+      title: 'Explore world\'s weather!',
       subTitle:
           'You can search and discover weather forecasts for cities around the globe.',
     ),
@@ -61,14 +63,15 @@ class _OnBoardingState extends State<OnBoarding> {
 
   @override
   Widget build(BuildContext context) {
-    // تحقق مما إذا كان أول مرة، وإذا كانت كذلك اعرض شاشة الـ onboarding
     if (isFirstTime) {
       return Scaffold(
         body: SafeArea(
           child: IntroScreenOnboarding(
-            introductionList: list,
+            introductionList: _introductionList,
             onTapSkipButton: () => Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) =>  Homepage())),
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            ),
             backgroudColor: const Color.fromARGB(255, 255, 255, 255),
             foregroundColor: const Color.fromARGB(255, 112, 86, 208),
             skipTextStyle: const TextStyle(
@@ -79,7 +82,6 @@ class _OnBoardingState extends State<OnBoarding> {
         ),
       );
     } else {
-      // إذا لم تكن أول مرة، أعد توجيه المستخدم إلى الشاشة الرئيسية مباشرة
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),
       );

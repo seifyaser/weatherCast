@@ -1,41 +1,88 @@
-class weatherModel{
+/// Weather data model representing current weather information
+class WeatherModel {
+  final String cityName;
+  final String date;
+  final double temp;
+  final double maxTemp;
+  final double minTemp;
+  final String weatherCondition;
+  final String sunrise;
+  final String sunset;
 
- final String CityName;
- //datatime is a class return time now
- final String date;
- final double temp;
- final double MaxTemp;
- final double MinTemp;
- final String WeatherCondition;
- final String Sunrise;
- final String Sunset;
+  WeatherModel({
+    required this.cityName,
+    required this.date,
+    required this.temp,
+    required this.maxTemp,
+    required this.minTemp,
+    required this.weatherCondition,
+    required this.sunrise,
+    required this.sunset,
+  });
 
-  weatherModel( {
-    required this.CityName,
-     required this.date,
-      required this.temp,
-       required this.MaxTemp,
-        required this.MinTemp,
-         required this.WeatherCondition,
-          required this.Sunrise,
-           required this.Sunset});
+  /// Creates a WeatherModel from JSON response
+  factory WeatherModel.fromJson(Map<String, dynamic> json) {
+    return WeatherModel(
+      cityName: json['location']['name'] as String,
+      date: json['location']['localtime'] as String,
+      temp: double.tryParse(
+            json['forecast']['forecastday'][0]['day']['avgtemp_c'].toString(),
+          ) ??
+          0.0,
+      maxTemp: double.tryParse(
+            json['forecast']['forecastday'][0]['day']['maxtemp_c'].toString(),
+          ) ??
+          0.0,
+      minTemp: double.tryParse(
+            json['forecast']['forecastday'][0]['day']['mintemp_c'].toString(),
+          ) ??
+          0.0,
+      weatherCondition:
+          json['forecast']['forecastday'][0]['day']['condition']['text'] as String,
+      sunrise: json['forecast']['forecastday'][0]['astro']['sunrise'] as String,
+      sunset: json['forecast']['forecastday'][0]['astro']['sunset'] as String,
+    );
+  }
 
-  factory weatherModel.fromJson(json) {
-  return weatherModel(
-    CityName: json['location']['name'],
-    // date: DateTime.parse(json['location']['localtime']),
-    date: json['location']['localtime'],
-    temp: double.tryParse(json['forecast']['forecastday'][0]['day']['avgtemp_c'].toString()) ?? 0.0,
-    MaxTemp: double.tryParse(json['forecast']['forecastday'][0]['day']['maxtemp_c'].toString()) ?? 0.0,
-    MinTemp: double.tryParse(json['forecast']['forecastday'][0]['day']['mintemp_c'].toString()) ?? 0.0,
-    WeatherCondition: json['forecast']['forecastday'][0]['day']['condition']['text'],
-    Sunrise: json['forecast']['forecastday'][0]['astro']['sunrise'],
-    Sunset: json['forecast']['forecastday'][0]['astro']['sunset'],
-  );
+  /// Converts WeatherModel to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'cityName': cityName,
+      'date': date,
+      'temp': temp,
+      'maxTemp': maxTemp,
+      'minTemp': minTemp,
+      'weatherCondition': weatherCondition,
+      'sunrise': sunrise,
+      'sunset': sunset,
+    };
+  }
+
+  /// Creates a copy of this model with updated fields
+  WeatherModel copyWith({
+    String? cityName,
+    String? date,
+    double? temp,
+    double? maxTemp,
+    double? minTemp,
+    String? weatherCondition,
+    String? sunrise,
+    String? sunset,
+  }) {
+    return WeatherModel(
+      cityName: cityName ?? this.cityName,
+      date: date ?? this.date,
+      temp: temp ?? this.temp,
+      maxTemp: maxTemp ?? this.maxTemp,
+      minTemp: minTemp ?? this.minTemp,
+      weatherCondition: weatherCondition ?? this.weatherCondition,
+      sunrise: sunrise ?? this.sunrise,
+      sunset: sunset ?? this.sunset,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'WeatherModel(cityName: $cityName, temp: $temp°C, condition: $weatherCondition)';
+  }
 }
-
-
-  toJson() {}         
-}
-
-
